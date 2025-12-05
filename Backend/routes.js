@@ -4,9 +4,16 @@ const { getAllVegProducts, getAllNonVegProducts, getAllSweets, getAllDrinkProduc
       saveDessertProducts, saveBreakfastProducts, saveSnackProducts, saveFastfoodProducts, saveSoupProducts, 
       saveBakeryProducts, createVegProducts, createNonVegProducts, saveDrinkProducts, 
       createOrders,
-      getAllOrderedProducts} = require("./controller");
+      getAllOrderedProducts,
+      loginUser,
+      registerController} = require("./controller");
+const authMiddleware = require("./authMiddleware");
 const router = express.Router();
 
+router.post("/register", registerController);
+router.post("/login", loginUser);
+
+router.use(authMiddleware);
 
 router.get("/veg",getAllVegProducts);
 router.get("/nonveg", getAllNonVegProducts);
@@ -35,7 +42,6 @@ router.post("/saveBakery",saveBakeryProducts);
 router.post("/saveOrders",createOrders);
 
 
-router.post("/register", registerController);
 
 
 module.exports = router;

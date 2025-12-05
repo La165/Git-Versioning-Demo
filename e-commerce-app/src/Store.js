@@ -551,7 +551,7 @@ export const registerUserThunk = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:3000/api/v1/products/register", userData);
+      const response = await axios.post("http://localhost:6001/api/v1/products/register", userData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Server Error");
@@ -585,10 +585,68 @@ extraReducers: (builder) => {
         state.error = action.payload.message || "Registration failed";
       });
   },
-
-
-
   });
+
+  export const loginUserThunk = createAsyncThunk(
+  "login/loginUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:6001/api/v1/products/login",
+        userData
+      );
+
+      return response.data; // { message: "", user: { ... } }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: "Server Error" }
+      );
+    }
+  }
+);
+
+const loginSlice = createSlice({
+  name: "login",
+  initialState: {
+    loading: false,
+    user: JSON.parse(localStorage.getItem("user")) || null,
+    message: "",
+    error: "",
+  },
+
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.message = "";
+      state.error = "";
+      localStorage.removeItem("user");
+    },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUserThunk.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(loginUserThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+
+        if (action.payload.user) {
+          state.user = action.payload.user;  // REAL user object
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
+        }
+      })
+
+      .addCase(loginUserThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Login failed";
+      });
+  },
+});
+export const { logout } = loginSlice.actions;
 
 
 
@@ -611,7 +669,8 @@ const store = configureStore({
     coupon: couponSlice.reducer, 
     Orders: ordersSlice.reducer,
     getOrders:getOrderSlice.reducer ,
-    auth:registrationSlice.reducer 
+    auth:registrationSlice.reducer ,
+    login:loginSlice.reducer
   },
 });
 

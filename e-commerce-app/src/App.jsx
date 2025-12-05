@@ -19,6 +19,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Orders from "./Orders";
 import Registration from "./Registration";
+import Login from "./Login";
 
 function App() {
   const cartItems = useSelector((state) => state.cart);
@@ -53,6 +54,7 @@ function App() {
               <li className="nav-item"><Link className="nav-link" to="/orders">Orders</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/contactus">ContactUs</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/register">Register</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
             </ul>
           </div>
 
@@ -78,7 +80,7 @@ function App() {
           <Route path="/orders" element={<Orders/>} />
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/register" element={<Registration />} />
-
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
 

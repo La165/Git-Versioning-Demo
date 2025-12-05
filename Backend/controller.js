@@ -169,6 +169,37 @@ const registerController = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        status: false,
+        message: "Email and password are required",
+        user: null,
+        token: null
+      });
+    }
+
+    const result = await loginService(email, password);
+
+    if (!result.status) {
+      return res.status(401).json(result);
+    }
+
+    return res.status(200).json(result);
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server Error",
+      error: error.message
+    });
+  }
+};
+
 
 
 
@@ -194,5 +225,5 @@ module.exports = {
     getAllBreakfastProducts,
     getAllSnacksProducts,
     getAllBakeryProducts,getAllFastFoodProducts,getAllSoupsProducts,
-    createOrders,getAllOrderedProducts
+    createOrders,getAllOrderedProducts,loginUser,registerController
 };

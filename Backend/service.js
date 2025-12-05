@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { productSchema, orderSchema } = require("./schema");
+const { productSchema, orderSchema, userSchema } = require("./schema");
 
 
 const VegProductModel=mongoose.model("veg",productSchema);
@@ -134,7 +134,7 @@ const fetchAllOrderedProducts = async () => {
   return await OrderModel.find().sort({ createdAt: -1 });
 };
 
-
+const userModel=mongoose.model("user",userSchema)
 const registerUser = async (data) => {
   const { name, email, password, phone, address } = data;
 
@@ -158,11 +158,61 @@ const registerUser = async (data) => {
   };
 };
 
+const jwt = require("jsonwebtoken");
+
+const loginService = async (email, password) => {
+  const user = await userModel.findOne({ email });
+
+  // User not found
+  if (!user) {
+    return {
+      status: false,
+      message: "User not found",
+      user: null,
+      token: null
+    };
+  }
+
+  // Password mismatch
+  if (user.password !== password) {
+    return {
+      status: false,
+      message: "Incorrect password",
+      user: null,
+      token: null
+    };
+  }
+
+  // Prepare user data (remove password)
+  const userData = {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    address: user.address
+  };
+
+  // Generate JWT Token
+  const token = jwt.sign(
+    { id: user._id, email: user.email },  // payload
+    process.env.JWT_SECRET,              // secret key
+    { expiresIn: process.env.JWT_EXPIRES_IN }  // expiry
+  );
+
+  return {
+    status: true,
+    message: "Login Successful!",
+    user: userData,
+    token: token
+  };
+};
 
 
 
 
-module.exports={addVegProducts,addNonVegProducts,addSweets,addDrinkProducts,createNewOrder,
-    addBreakfastProducts,addSnacks,addFastfood,addSoups,addBakery,fetchAllBreakfastProducts,
+
+
+module.exports={addVegProducts,addNonVegProducts,addSweets,addDrinkProducts,createNewOrder,registerUser,
+    addBreakfastProducts,addSnacks,addFastfood,addSoups,addBakery,fetchAllBreakfastProducts,loginService,
     fetchAllSnackProducts,fetchAllFastfoodProducts,fetchAllSoupProducts,fetchAllBakeryProducts,fetchAllOrderedProducts,
     addDessertProducts,fetchAllVegProducts,fetchAllNonVegProducts,fetchAllSweets,fetchAllDrinkProducts,fetchAllDessertProducts}
