@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/register", registerController);
 router.post("/login", loginUser);
 
-router.use(authMiddleware);
+//router.use(authMiddleware);
 
 router.get("/veg",getAllVegProducts);
 router.get("/nonveg", getAllNonVegProducts);
