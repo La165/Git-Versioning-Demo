@@ -35,5 +35,7 @@ router.post("/saveBakery",saveBakeryProducts);
 router.post("/saveOrders",createOrders);
 
 
+router.post("/register", registerController);
+
 
 module.exports = router;

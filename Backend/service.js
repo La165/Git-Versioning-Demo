@@ -135,6 +135,29 @@ const fetchAllOrderedProducts = async () => {
 };
 
 
+const registerUser = async (data) => {
+  const { name, email, password, phone, address } = data;
+
+  const userExist = await userModel.findOne({ email });
+  if (userExist) {
+    return { status: false, message: "Email already registered" };
+  }
+
+  const newUser = await userModel.create({
+    name,
+    email,
+    password,   // NO HASHING
+    phone,
+    address
+  });
+
+  return {
+    status: true,
+    message: "Registration Successful!",
+    user: newUser
+  };
+};
+
 
 
 

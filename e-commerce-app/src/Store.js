@@ -547,6 +547,50 @@ const cartSlice = createSlice({
     },
   },
 });
+export const registerUserThunk = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://localhost:3000/api/v1/products/register", userData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Server Error");
+    }
+  }
+);
+
+
+let registrationSlice=createSlice(
+  {
+    name: "auth",
+    initialState : {
+  loading: false,
+  user: null,
+  message: "",
+  error: "",
+},
+reducers:{},
+extraReducers: (builder) => {
+    builder
+      .addCase(registerUserThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(registerUserThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.message = action.payload.message;
+      })
+      .addCase(registerUserThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message || "Registration failed";
+      });
+  },
+
+
+
+  });
+
+
 
 export const { addToCart, decreaseQuantity, removeFromCart} =cartSlice.actions;
 export const{applyCoupon}=couponSlice.actions;
@@ -566,7 +610,8 @@ const store = configureStore({
     cart: cartSlice.reducer,
     coupon: couponSlice.reducer, 
     Orders: ordersSlice.reducer,
-    getOrders:getOrderSlice.reducer   
+    getOrders:getOrderSlice.reducer ,
+    auth:registrationSlice.reducer 
   },
 });
 

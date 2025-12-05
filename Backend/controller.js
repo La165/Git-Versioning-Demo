@@ -153,6 +153,22 @@ const getAllOrderedProducts = async (req, res) => {
   }
 };
 
+const registerController = async (req, res) => {
+
+  try {
+    const result = await registerUser(req.body);
+
+    if (!result.status) {
+      return res.status(400).json(result);
+    }
+
+    res.json(result);
+
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
 
 
 
